@@ -1,8 +1,11 @@
 #include <napi.h>
-#include "Pelicano.h"
+// #include "azkoyen/Azkoyen.h"
+#include "pelicano/Pelicano.h"
 
 Napi::Object InitAll(Napi::Env env, Napi::Object exports) {
-  return Pelicano::Init(env, exports);
+  Pelicano::Init(env, exports);
+  // Azkoyen::Init(env, exports);
+  return exports;
 }
 
-NODE_API_MODULE(pelicano, InitAll);
+NODE_API_MODULE(oink_addons, InitAll);

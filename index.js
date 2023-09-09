@@ -1,6 +1,6 @@
-const { Pelicano } = require('./dist');
+const { Azkoyen, Pelicano } = require('./dist');
 
-const pelicano = new Pelicano({
+const pelicano = new Azkoyen({
   maxCritical: 4,
   warnToCritical: 10,
   maximumPorts: 10,

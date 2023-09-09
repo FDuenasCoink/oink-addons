@@ -1,4 +1,4 @@
-export interface PelicanoObj {
+export interface ValidatorObj {
   connect(): CommandResponse;
   checkDevice(): CommandResponse;
   startReader(): CommandResponse;
@@ -11,7 +11,7 @@ export interface PelicanoObj {
   cleanDevice(): CommandResponse;
 }
 
-export interface PelicanoOptions {
+export interface ValidatorOptions {
   warnToCritical: number;
   maxCritical: number;
   maximumPorts: number;

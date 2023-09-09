@@ -1,6 +1,6 @@
 {
     "targets": [{
-        "target_name": "pelicano",
+        "target_name": "oink-addons",
         'cflags!': [
             '-fno-exceptions'
         ],
@@ -12,10 +12,14 @@
         },
         "sources": [
             "src/main.cpp",
-            "src/PelicanoControl.cpp",
-            "src/StateMachine.cpp",
-            "src/ValidatorPelicano.cpp",
-            "src/Pelicano.cpp",
+            "src/pelicano/PelicanoControl.cpp",
+            "src/pelicano/StateMachine.cpp",
+            "src/pelicano/ValidatorPelicano.cpp",
+            "src/pelicano/Pelicano.cpp",
+            "src/azkoyen/AzkoyenControl.cpp",
+            "src/azkoyen/StateMachine.cpp",
+            "src/azkoyen/ValidatorAzkoyen.cpp",
+            "src/azkoyen/Azkoyen.cpp",
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")",
