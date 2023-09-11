@@ -14,6 +14,7 @@ Napi::Object Azkoyen::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("stopReader", &Azkoyen::StopReader),
     InstanceMethod("resetDevice", &Azkoyen::ResetDevice),
     InstanceMethod("testStatus", &Azkoyen::TestStatus),
+    InstanceMethod("cleanDevice", &Azkoyen::CleanDevice),
   });
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
