@@ -13,7 +13,7 @@
 
 namespace AzkoyenControl {
 
-    using namespace StateMachineAzkoyen;
+    using namespace StateMachine;
     using namespace ValidatorAzkoyen;
 
     // --------------- EXTERNAL VARIABLES --------------------//
