@@ -1,6 +1,6 @@
-const { Azkoyen, Pelicano } = require('./dist');
+const { Pelicano } = require('../dist');
 
-const pelicano = new Azkoyen({
+const pelicano = new Pelicano({
   maxCritical: 4,
   warnToCritical: 10,
   maximumPorts: 10,
@@ -30,7 +30,10 @@ for (let i = 0; i < 400; i++) {
   if (coin.remaining > 1) {
     const coinLost = pelicano.getLostCoins();
     console.log({ coinLost });
-    // TODO: sumar el total.
+    Object.entries(coinLost).forEach(([coin, quantity]) => {
+      const coinTotal = Number(coin) * quantity;
+      total += coinTotal;
+    });
   }
   if (coin.statusCode === 402 || coin.statusCode === 403) {
     console.log('Error detectado se detiene el loop');

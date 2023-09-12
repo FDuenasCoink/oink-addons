@@ -1,7 +1,7 @@
 {
   "name": "oink-addons",
   "version": "1.0.0",
-  "description": "",
+  "description": "Addons to control oink hardware in javascript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "gypfile": true,

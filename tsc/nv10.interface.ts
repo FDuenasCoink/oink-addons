@@ -4,7 +4,7 @@ export interface NV10Obj {
   connect(): CommandResponse;
   checkDevice(): CommandResponse;
   startReader(): CommandResponse;
-  getBill(): void;
+  getBill(): Bill;
   modifyChannels(inhibitMask: number): CommandResponse;
   stopReader(): CommandResponse;
   reject(): CommandResponse;
