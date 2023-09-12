@@ -1,5 +1,5 @@
 {
-  "name": "oink-addons",
+  "name": "@FDuenasCoink/oink-addons",
   "version": "1.0.0",
   "description": "Addons to control oink hardware in javascript",
   "main": "dist/index.js",
@@ -12,7 +12,8 @@
     "prebuild": "prebuildify --napi --strip --electron-compat",
     "prepublishOnly": "prebuildify --napi --strip --electron-compat",
     "clean": "node-gyp clean",
-    "compile": "tsc"
+    "compile": "tsc",
+    "test": "exit 0"
   },
   "keywords": [],
   "author": "",
