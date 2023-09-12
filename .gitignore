@@ -4,5 +4,4 @@ build
 *~
 *.log
 docs
-dist
 prebuilds
