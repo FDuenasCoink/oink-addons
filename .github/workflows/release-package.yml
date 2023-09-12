@@ -22,10 +22,6 @@ jobs:
             os: windows-2019
             node: x64
             command: prebuildify
-          - name: linux-x64
-            os: ubuntu-latest
-            command: prebuildify-cross
-            args: -i centos7-devtoolset7 -i alpine
           - name: linux-arm
             os: ubuntu-latest
             command: prebuildify-cross
