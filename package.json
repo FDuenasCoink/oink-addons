@@ -1,5 +1,5 @@
 {
-  "name": "@FDuenasCoink/oink-addons",
+  "name": "@fduenascoink/oink-addons",
   "version": "1.0.0",
   "description": "Addons to control oink hardware in javascript",
   "repository": {
@@ -13,14 +13,14 @@
     "install": "node-gyp-build",
     "rebuild": "node-gyp rebuild",
     "prebuildify-cross": "prebuildify-cross -i linux-arm64 --napi --strip --verbose",
-    "prebuild": "prebuildify --napi --strip --electron-compat",
+    "prebuildify": "prebuildify --napi --strip --electron-compat",
     "prepublishOnly": "prebuildify --napi --strip --electron-compat",
     "clean": "node-gyp clean",
-    "compile": "tsc",
+    "build": "tsc",
     "test": "exit 0"
   },
   "publishConfig": {
-    "@FDuenasCoink:registry": "https://npm.pkg.github.com"
+    "@fduenascoink:registry": "https://npm.pkg.github.com"
   },
   "keywords": ["oink", "hardware"],
   "author": "Fabian David Dueñas",
