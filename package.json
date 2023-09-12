@@ -2,6 +2,10 @@
   "name": "@FDuenasCoink/oink-addons",
   "version": "1.0.0",
   "description": "Addons to control oink hardware in javascript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FDuenasCoink/oink-addons.git"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "gypfile": true,
@@ -15,8 +19,11 @@
     "compile": "tsc",
     "test": "exit 0"
   },
-  "keywords": [],
-  "author": "",
+  "publishConfig": {
+    "@FDuenasCoink:registry": "https://npm.pkg.github.com"
+  },
+  "keywords": ["oink", "hardware"],
+  "author": "Fabian David Dueñas",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.5.9",
