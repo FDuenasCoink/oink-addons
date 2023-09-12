@@ -1,4 +1,4 @@
-#include "Azkoyen.h"
+#include "Azkoyen.hpp"
 
 Napi::FunctionReference Azkoyen::constructor;
 

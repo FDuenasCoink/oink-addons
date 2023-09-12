@@ -24,6 +24,10 @@
             "src/dispenser/DispenserControl.cpp",
             "src/dispenser/DispenserWrapper.cpp",
             "src/dispenser/StateMachine.cpp",
+            "src/nv10/NV10Control.cpp",
+            "src/nv10/NV10Wrapper.cpp",
+            "src/nv10/StateMachine.cpp",
+            "src/nv10/ValidatorNV10.cpp",
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")",
