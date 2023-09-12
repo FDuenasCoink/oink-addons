@@ -10,6 +10,11 @@
         'xcode_settings': {
             'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
         },
+        'msvs_settings': {
+            'VCCLCompilerTool': {
+            'ExceptionHandling': 1
+            }
+        },
         "sources": [
             "src/main.cpp",
             "src/pelicano/PelicanoControl.cpp",

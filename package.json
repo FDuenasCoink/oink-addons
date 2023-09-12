@@ -12,9 +12,8 @@
   "scripts": {
     "install": "node-gyp-build",
     "rebuild": "node-gyp rebuild",
-    "prebuildify-cross": "prebuildify-cross -i linux-arm64 --napi --strip --verbose",
+    "prebuildify-cross": "prebuildify-cross --napi --strip",
     "prebuildify": "prebuildify --napi --strip --electron-compat",
-    "prepublishOnly": "prebuildify --napi --strip --electron-compat",
     "clean": "node-gyp clean",
     "build": "tsc",
     "test": "exit 0"
