@@ -9,16 +9,16 @@
  * 
  */
 
-#ifndef STATEMACHINE_HPP
-#define STATEMACHINE_HPP
+#ifndef STATEMACHINE_HPP_DISPENSER
+#define STATEMACHINE_HPP_DISPENSER
 
 #include "Dispenser.hpp"
 
-namespace StateMachine{
+namespace DispenserStateMachine{
 
     using namespace Dispenser;
     
-    class SMClass{
+    class DispenserSMClass{
         public:
 
             enum State_t{
@@ -51,7 +51,7 @@ namespace StateMachine{
              * @brief Construct a new SMClass object
              * @param _DispenserClass_p Apuntador a la clase del archivo Dispenser.cpp
              */
-            SMClass(Dispenser::DispenserClass *_DispenserClass_p);
+            DispenserSMClass(Dispenser::DispenserClass *_DispenserClass_p);
 
             /**
              * @brief Estado actual de la maquina de estados

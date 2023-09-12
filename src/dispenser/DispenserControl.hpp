@@ -21,7 +21,7 @@
 
 namespace DispenserControl{
 
-    using namespace StateMachine;
+    using namespace DispenserStateMachine;
     using namespace Dispenser;
 
     struct Response_t{
@@ -51,7 +51,7 @@ namespace DispenserControl{
         public:
             DispenserClass DispenserObject;
             DispenserClass* DispenserPointer;
-            SMClass SMObject;
+            DispenserSMClass SMObject;
             GlobalVariables() : DispenserObject(), DispenserPointer(&DispenserObject), SMObject(DispenserPointer) {}
     };
 

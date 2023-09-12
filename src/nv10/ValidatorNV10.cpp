@@ -765,7 +765,7 @@ namespace ValidatorNV10{
         }
 
         if ((Res!=0)&(Res!=1)){
-            ioctl(SerialPort, TCFLSH, 2);
+            ioctl(SerialPort, TCIOFLUSH, 2);
         }
 
         return Res;

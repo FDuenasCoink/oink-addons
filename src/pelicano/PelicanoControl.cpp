@@ -13,7 +13,7 @@
 
 namespace PelicanoControl {
 
-    using namespace StateMachine;
+    using namespace PelicanoStateMachine;
     using namespace ValidatorPelicano;
 
     // --------------- EXTERNAL VARIABLES --------------------//
@@ -81,21 +81,21 @@ namespace PelicanoControl {
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         //Cambio de estado: ST_IDLE ---> ST_CONNECT
-        Connection = Globals.SMObject.StateMachineRun(SMClass::EV_ANY);
+        Connection = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_ANY);
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         if (Connection == 0){
             
             PortO = Globals.PelicanoObject.PortO;
             //Cambio de estado: ST_CONNECT ---> ST_CHECK
-            Check = Globals.SMObject.StateMachineRun(SMClass::EV_SUCCESS_CONN);
+            Check = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_SUCCESS_CONN);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
             Response = CheckCodes(Check);
         }
         else {
             //Cambio de estado: ST_CONNECT ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
             Response.StatusCode = 505;
             Response.Message = "Fallo en la conexion con el validador, puerto no encontrado";
@@ -146,12 +146,12 @@ namespace PelicanoControl {
             // Si la bandeja no esta limpia o cerrada se cambia al estado CLEANBOWL para limpiarla y cerrarla
             else {
                 //Cambio de estado: ST_CHECK ---> ST_CLEANBOWL
-                CleanBowl = Globals.SMObject.StateMachineRun(SMClass::EV_TRASH);
+                CleanBowl = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_TRASH);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                 if ((CleanBowl == 0) | (CleanBowl == 2)){
                     //Cambio de estado: ST_CLEANBOWL ---> ST_CHECK
-                    Check = Globals.SMObject.StateMachineRun(SMClass::EV_ANY);
+                    Check = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_ANY);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                     Response = CheckCodes(Check);
 
@@ -172,17 +172,17 @@ namespace PelicanoControl {
             //Se debe cambiar de estado a reset cuando el evento no esta reiniciado o el bowl esta en mal estado y por ultimo se cambia al estado check
             else {
                 //Cambio de estado: ST_POLLING ---> ST_CLEANBOWL
-                CleanBowl = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+                CleanBowl = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_FINISH_POLL);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                 if ((CleanBowl == 0) | (CleanBowl == 2)){
                     //Cambio de estado: ST_CLEANBOWL ---> ST_RESET
-                    Reset = Globals.SMObject.StateMachineRun(SMClass::EV_EMPTY);
+                    Reset = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_EMPTY);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                     if (Reset == 0){
                         //Cambio de estado: ST_RESET ---> ST_CHECK
-                        Check = Globals.SMObject.StateMachineRun(SMClass::EV_LOOP);
+                        Check = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_LOOP);
                         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                         if (Check == 0){
@@ -207,11 +207,11 @@ namespace PelicanoControl {
         if (FlagReady){
             //Si llega hasta este punto, debe estar en el estado ST_CHECK
             //Cambio de estado: ST_CHECK ---> ST_ENABLE
-            Enable = Globals.SMObject.StateMachineRun(SMClass::EV_CALL_POLLING);
+            Enable = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_CALL_POLLING);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
             if (Enable == 0){
                 //Cambio de estado: ST_ENABLE ---> ST_POLLING
-                Poll = Globals.SMObject.StateMachineRun(SMClass::EV_READY);
+                Poll = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_READY);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                 if (((Poll == 0) | (Poll == -2)) & (Globals.PelicanoObject.CoinEvent <= 1)){
@@ -266,7 +266,7 @@ namespace PelicanoControl {
 
         if (strcmp(Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState), "ST_POLLING") == 0){
             //Cambio de estado: ST_POLLING ---> ST_POLLING
-            Poll = Globals.SMObject.StateMachineRun(SMClass::EV_POLL);
+            Poll = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_POLL);
             
             if (Globals.PelicanoObject.CoinEvent != CoinEventPrev){
                 //std::cout<<"[MAIN] Evento actual: "<<Globals.PelicanoObject.CoinEvent<<" Evento previo: "<<CoinEventPrev<<std::endl;
@@ -419,32 +419,32 @@ namespace PelicanoControl {
         if(strcmp(Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState), "ST_POLLING") == 0){
             if ((FlagCritical) | (FlagCritical2)) {
                 //Cambio de estado: ST_POLLING ---> ST_CLEANBOWL
-                Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+                Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_FINISH_POLL);
                 //Cambio de estado: ST_CLEANBOWL ---> ST_RESET
-                Globals.SMObject.StateMachineRun(SMClass::EV_EMPTY);
+                Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_EMPTY);
                 //Cambio de estado: ST_RESET ---> ST_ERROR
-                Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+                Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_ERROR);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 Response.StatusCode = 509;
                 Response.Message = "Fallo en el deposito. Hubo un error critico";
             }
             else {
                 //Cambio de estado: ST_POLLING ---> ST_CLEANBOWL
-                CleanBowl = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+                CleanBowl = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_FINISH_POLL);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 if (CleanBowl == 0){
                     //Cambio de estado: ST_CLEANBOWL ---> ST_RESET
-                    Reset = Globals.SMObject.StateMachineRun(SMClass::EV_EMPTY);
+                    Reset = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_EMPTY);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                     if (Reset == 0){
                         //Cambio de estado: ST_RESET ---> ST_CHECK
-                        Check = Globals.SMObject.StateMachineRun(SMClass::EV_LOOP);
+                        Check = Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_LOOP);
                         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                         Response = CheckCodes(Check);
                     }
                     else{
                         //Cambio de estado: ST_RESET ---> ST_ERROR
-                        Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+                        Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_ERROR);
                         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                         Response.StatusCode = 506;
                         Response.Message = "Fallo con el validador. Validador no reinicio aunque se intento reiniciar";
@@ -452,7 +452,7 @@ namespace PelicanoControl {
                 }
                 else{
                     //Cambio de estado: ST_CLEANBOWL ---> ST_ERROR
-                    Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+                    Globals.SMObject.StateMachineRun(PelicanoSMClass::EV_ERROR);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                     Response.StatusCode = 510;
                     Response.Message = "Fallo con el validador. Validador no limpio el bowl, aunque se intento limpiar";

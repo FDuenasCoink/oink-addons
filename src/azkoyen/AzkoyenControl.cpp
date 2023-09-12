@@ -13,7 +13,7 @@
 
 namespace AzkoyenControl {
 
-    using namespace StateMachine;
+    using namespace AzkoyenStateMachine;
     using namespace ValidatorAzkoyen;
 
     // --------------- EXTERNAL VARIABLES --------------------//
@@ -80,21 +80,21 @@ namespace AzkoyenControl {
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         //Cambio de estado: ST_IDLE ---> ST_CONNECT
-        Connection = Globals.SMObject.StateMachineRun(SMClass::EV_ANY);
+        Connection = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_ANY);
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         if (Connection == 0){
             
             PortO = Globals.AzkoyenObject.PortO;
             //Cambio de estado: ST_CONNECT ---> ST_CHECK
-            Check = Globals.SMObject.StateMachineRun(SMClass::EV_SUCCESS_CONN);
+            Check = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_SUCCESS_CONN);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
             Response = CheckCodes(Check);
         }
         else {
             //Cambio de estado: ST_CONNECT ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
             Response.StatusCode = 505;
             Response.Message = "Fallo en la conexion con el validador, puerto no encontrado";
@@ -149,11 +149,11 @@ namespace AzkoyenControl {
             //Se debe cambiar de estado a reset cuando el evento no esta reiniciado y por ultimo se cambia al estado check
             else {
                 //Cambio de estado: ST_POLLING ---> ST_RESET
-                Reset = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+                Reset = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_FINISH_POLL);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 if (Reset == 0){
                     //Cambio de estado: ST_RESET ---> ST_CHECK
-                    Check = Globals.SMObject.StateMachineRun(SMClass::EV_LOOP);
+                    Check = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_LOOP);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                     Response = CheckCodes(Check);
                     if ((Response.StatusCode == 200) | (Response.StatusCode == 300)){
@@ -178,11 +178,11 @@ namespace AzkoyenControl {
             if (FlagInit){
                 //Si llega hasta este punto, debe estar en el estado ST_CHECK
                 //Cambio de estado: ST_CHECK ---> ST_WAIT_POLLING
-                Enable = Globals.SMObject.StateMachineRun(SMClass::EV_CALL_POLLING);
+                Enable = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_CALL_POLLING);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 if (Enable == 0){
                     //Cambio de estado: ST_WAIT_POLLING ---> ST_POLLING
-                    Poll = Globals.SMObject.StateMachineRun(SMClass::EV_READY);
+                    Poll = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_READY);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                     if (((Poll == 0) | (Poll == -2)) & (Globals.AzkoyenObject.CoinEvent <= 1)){
@@ -227,7 +227,7 @@ namespace AzkoyenControl {
 
         if (strcmp(Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState), "ST_POLLING") == 0){
             
-            Poll = Globals.SMObject.StateMachineRun(SMClass::EV_POLL);
+            Poll = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_POLL);
             
             if (Globals.AzkoyenObject.CoinEvent != CoinEventPrev){
                 //std::cout<<"[MAIN] Evento actual: "<<Globals.AzkoyenObject.CoinEvent<<" Evento previo: "<<CoinEventPrev<<std::endl;
@@ -375,24 +375,24 @@ namespace AzkoyenControl {
         if(strcmp(Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState), "ST_POLLING") == 0){
             if ((FlagCritical) | (FlagCritical2)) {
                 //Cambio de estado: ST_POLLING ---> ST_ERROR
-                Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+                Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_ERROR);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 Response.StatusCode = 509;
                 Response.Message = "Fallo en el deposito. Hubo un error critico";
             }
             else {
                 //Cambio de estado: ST_POLLING ---> ST_RESET
-                int Reset = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+                int Reset = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_FINISH_POLL);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 if (Reset == 0){
                     //Cambio de estado: ST_RESET ---> ST_CHECK
-                    int Check = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+                    int Check = Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_FINISH_POLL);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                     Response = CheckCodes(Check);
                 }
                 else{
                     //Cambio de estado: ST_RESET ---> ST_ERROR
-                    Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+                    Globals.SMObject.StateMachineRun(AzkoyenSMClass::EV_ERROR);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                     Response.StatusCode = 506;
                     Response.Message = "Fallo con el validador. Validador no reinicio aunque se intento reiniciar";

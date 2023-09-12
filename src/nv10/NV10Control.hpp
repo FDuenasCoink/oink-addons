@@ -21,7 +21,7 @@
 
 namespace NV10Control{
 
-    using namespace StateMachine;
+    using namespace NV10StateMachine;
     using namespace ValidatorNV10;
 
     struct Response_t{
@@ -49,7 +49,7 @@ namespace NV10Control{
         public:
             NV10Class NV10Object;
             NV10Class* NV10Pointer;
-            SMClass SMObject;
+            NV10SMClass SMObject;
             GlobalVariables() : NV10Object(), NV10Pointer(&NV10Object), SMObject(NV10Pointer) {}
     };
 

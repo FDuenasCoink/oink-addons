@@ -20,7 +20,7 @@
 
 namespace AzkoyenControl{
 
-    using namespace StateMachine;
+    using namespace AzkoyenStateMachine;
     using namespace ValidatorAzkoyen;
 
     struct Response_t{
@@ -58,7 +58,7 @@ namespace AzkoyenControl{
         public:
             AzkoyenClass AzkoyenObject;
             AzkoyenClass* AzkoyenPointer;
-            SMClass SMObject;
+            AzkoyenSMClass SMObject;
             GlobalVariables() : AzkoyenObject(), AzkoyenPointer(&AzkoyenObject), SMObject(AzkoyenPointer) {}
     };
 

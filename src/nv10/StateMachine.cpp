@@ -12,15 +12,15 @@
 #include "ValidatorNV10.hpp"
 #include "StateMachine.hpp"
 
-namespace StateMachine{
+namespace NV10StateMachine{
 
     using namespace ValidatorNV10;
 
     NV10Class *NV10Object;
 
-    SMClass::SMClass(ValidatorNV10::NV10Class *_NV10Class_p){
+    NV10SMClass::NV10SMClass(ValidatorNV10::NV10Class *_NV10Class_p){
         NV10Object = _NV10Class_p;
-        SM.CurrState = SMClass::ST_IDLE;
+        SM.CurrState = NV10SMClass::ST_IDLE;
     };
 
     struct StateFunctionRow_t{
@@ -40,50 +40,50 @@ namespace StateMachine{
     };
 
     struct StateTransitionRow_t{
-        SMClass::State_t CurrState;
-        SMClass::Event_t Event;
-        SMClass::State_t NextState;
+        NV10SMClass::State_t CurrState;
+        NV10SMClass::Event_t Event;
+        NV10SMClass::State_t NextState;
     } ;
     
     static StateTransitionRow_t StateTransition[] = {
         // CURR STATE       // EVENT            // NEXT STATE
-        { SMClass::ST_IDLE,          SMClass::EV_ANY,             SMClass::ST_CONNECT},
+        { NV10SMClass::ST_IDLE,          NV10SMClass::EV_ANY,             NV10SMClass::ST_CONNECT},
 
-        { SMClass::ST_CONNECT,       SMClass::EV_SUCCESS_CONN,    SMClass::ST_DISABLE},
-        { SMClass::ST_CONNECT,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { NV10SMClass::ST_CONNECT,       NV10SMClass::EV_SUCCESS_CONN,    NV10SMClass::ST_DISABLE},
+        { NV10SMClass::ST_CONNECT,       NV10SMClass::EV_ERROR,           NV10SMClass::ST_ERROR},
 
-        { SMClass::ST_DISABLE,       SMClass::EV_READY,           SMClass::ST_ENABLE},
-        { SMClass::ST_DISABLE,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { NV10SMClass::ST_DISABLE,       NV10SMClass::EV_READY,           NV10SMClass::ST_ENABLE},
+        { NV10SMClass::ST_DISABLE,       NV10SMClass::EV_ERROR,           NV10SMClass::ST_ERROR},
 
-        { SMClass::ST_ENABLE,        SMClass::EV_CALL_POLLING,    SMClass::ST_POLLING},
-        { SMClass::ST_ENABLE,        SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { NV10SMClass::ST_ENABLE,        NV10SMClass::EV_CALL_POLLING,    NV10SMClass::ST_POLLING},
+        { NV10SMClass::ST_ENABLE,        NV10SMClass::EV_ERROR,           NV10SMClass::ST_ERROR},
 
-        { SMClass::ST_POLLING,       SMClass::EV_FINISH_POLL,     SMClass::ST_CHECK},
-        { SMClass::ST_POLLING,       SMClass::EV_POLL,            SMClass::ST_POLLING},
-        { SMClass::ST_POLLING,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { NV10SMClass::ST_POLLING,       NV10SMClass::EV_FINISH_POLL,     NV10SMClass::ST_CHECK},
+        { NV10SMClass::ST_POLLING,       NV10SMClass::EV_POLL,            NV10SMClass::ST_POLLING},
+        { NV10SMClass::ST_POLLING,       NV10SMClass::EV_ERROR,           NV10SMClass::ST_ERROR},
 
-        { SMClass::ST_CHECK,         SMClass::EV_LOOP,            SMClass::ST_DISABLE},
-        { SMClass::ST_CHECK,         SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { NV10SMClass::ST_CHECK,         NV10SMClass::EV_LOOP,            NV10SMClass::ST_DISABLE},
+        { NV10SMClass::ST_CHECK,         NV10SMClass::EV_ERROR,           NV10SMClass::ST_ERROR},
 
-        { SMClass::ST_ERROR,         SMClass::EV_RESET,           SMClass::ST_IDLE},
+        { NV10SMClass::ST_ERROR,         NV10SMClass::EV_RESET,           NV10SMClass::ST_IDLE},
 
     };
 
-    void SMClass::InitStateMachine() {
-        SM.CurrState = SMClass::ST_IDLE; 
+    void NV10SMClass::InitStateMachine() {
+        SM.CurrState = NV10SMClass::ST_IDLE; 
         (NV10Object[0].*(StateFunctionValidatorNV10[SM.CurrState].func))();
     }
     
-    int SMClass::RunCheck() {
+    int NV10SMClass::RunCheck() {
         int Response = -1;
         LS.CurrState = SM.CurrState; 
-        SM.CurrState = SMClass::ST_CHECK; 
+        SM.CurrState = NV10SMClass::ST_CHECK; 
         Response = (NV10Object[0].*(StateFunctionValidatorNV10[SM.CurrState].func))();
         SM.CurrState = LS.CurrState;
         return Response;
     }
 
-    int SMClass::StateMachineRun(Event_t Event) {
+    int NV10SMClass::StateMachineRun(Event_t Event) {
         int Response = -1;
         for(long unsigned int i = 0; i < sizeof(StateTransition)/sizeof(StateTransition[0]); i++) {
             if(StateTransition[i].CurrState == SM.CurrState) {
@@ -98,7 +98,7 @@ namespace StateMachine{
         return 0;
     }
     
-    const char * SMClass::StateMachineGetStateName(State_t State) {
+    const char * NV10SMClass::StateMachineGetStateName(State_t State) {
         return StateFunctionValidatorNV10[State].name;
     }
 };

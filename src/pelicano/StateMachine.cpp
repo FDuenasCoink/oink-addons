@@ -11,15 +11,15 @@
 
 #include "StateMachine.hpp"
 
-namespace StateMachine{
+namespace PelicanoStateMachine{
 
     using namespace ValidatorPelicano;
 
     PelicanoClass *PelicanoObject;
 
-    SMClass::SMClass(ValidatorPelicano::PelicanoClass *_PelicanoClass_p){
+    PelicanoSMClass::PelicanoSMClass(ValidatorPelicano::PelicanoClass *_PelicanoClass_p){
         PelicanoObject = _PelicanoClass_p;
-        SM.CurrState = SMClass::ST_IDLE;
+        SM.CurrState = PelicanoSMClass::ST_IDLE;
     };
 
     struct StateFunctionRow_t{
@@ -40,75 +40,75 @@ namespace StateMachine{
     };
 
     struct StateTransitionRow_t{
-        SMClass::State_t CurrState;
-        SMClass::Event_t Event;
-        SMClass::State_t NextState;
+        PelicanoSMClass::State_t CurrState;
+        PelicanoSMClass::Event_t Event;
+        PelicanoSMClass::State_t NextState;
     } ;
     
     static StateTransitionRow_t StateTransition[] = {
         // CURR STATE       // EVENT            // NEXT STATE
-        { SMClass::ST_IDLE,          SMClass::EV_ANY,             SMClass::ST_CONNECT},
+        { PelicanoSMClass::ST_IDLE,          PelicanoSMClass::EV_ANY,             PelicanoSMClass::ST_CONNECT},
 
-        { SMClass::ST_CONNECT,       SMClass::EV_SUCCESS_CONN,    SMClass::ST_CHECK},
-        { SMClass::ST_CONNECT,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { PelicanoSMClass::ST_CONNECT,       PelicanoSMClass::EV_SUCCESS_CONN,    PelicanoSMClass::ST_CHECK},
+        { PelicanoSMClass::ST_CONNECT,       PelicanoSMClass::EV_ERROR,           PelicanoSMClass::ST_ERROR},
 
-        { SMClass::ST_CHECK,         SMClass::EV_CALL_POLLING,    SMClass::ST_ENABLE},
-        { SMClass::ST_CHECK,         SMClass::EV_CHECK,           SMClass::ST_CHECK},
-        { SMClass::ST_CHECK,         SMClass::EV_TRASH,           SMClass::ST_CLEANBOWL},
-        { SMClass::ST_CHECK,         SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { PelicanoSMClass::ST_CHECK,         PelicanoSMClass::EV_CALL_POLLING,    PelicanoSMClass::ST_ENABLE},
+        { PelicanoSMClass::ST_CHECK,         PelicanoSMClass::EV_CHECK,           PelicanoSMClass::ST_CHECK},
+        { PelicanoSMClass::ST_CHECK,         PelicanoSMClass::EV_TRASH,           PelicanoSMClass::ST_CLEANBOWL},
+        { PelicanoSMClass::ST_CHECK,         PelicanoSMClass::EV_ERROR,           PelicanoSMClass::ST_ERROR},
 
-        { SMClass::ST_ENABLE,        SMClass::EV_READY,           SMClass::ST_POLLING},
-        { SMClass::ST_ENABLE,        SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { PelicanoSMClass::ST_ENABLE,        PelicanoSMClass::EV_READY,           PelicanoSMClass::ST_POLLING},
+        { PelicanoSMClass::ST_ENABLE,        PelicanoSMClass::EV_ERROR,           PelicanoSMClass::ST_ERROR},
         
-        { SMClass::ST_POLLING,       SMClass::EV_FINISH_POLL,     SMClass::ST_CLEANBOWL},
-        { SMClass::ST_POLLING,       SMClass::EV_POLL,            SMClass::ST_POLLING},
-        { SMClass::ST_POLLING,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { PelicanoSMClass::ST_POLLING,       PelicanoSMClass::EV_FINISH_POLL,     PelicanoSMClass::ST_CLEANBOWL},
+        { PelicanoSMClass::ST_POLLING,       PelicanoSMClass::EV_POLL,            PelicanoSMClass::ST_POLLING},
+        { PelicanoSMClass::ST_POLLING,       PelicanoSMClass::EV_ERROR,           PelicanoSMClass::ST_ERROR},
 
-        { SMClass::ST_CLEANBOWL,     SMClass::EV_EMPTY,           SMClass::ST_RESET},
-        { SMClass::ST_CLEANBOWL,     SMClass::EV_ERROR,           SMClass::ST_ERROR},
-        { SMClass::ST_CLEANBOWL,     SMClass::EV_ANY,             SMClass::ST_CHECK},
-        { SMClass::ST_CLEANBOWL,     SMClass::EV_FINISH_POLL,     SMClass::ST_CLEANBOWL},
+        { PelicanoSMClass::ST_CLEANBOWL,     PelicanoSMClass::EV_EMPTY,           PelicanoSMClass::ST_RESET},
+        { PelicanoSMClass::ST_CLEANBOWL,     PelicanoSMClass::EV_ERROR,           PelicanoSMClass::ST_ERROR},
+        { PelicanoSMClass::ST_CLEANBOWL,     PelicanoSMClass::EV_ANY,             PelicanoSMClass::ST_CHECK},
+        { PelicanoSMClass::ST_CLEANBOWL,     PelicanoSMClass::EV_FINISH_POLL,     PelicanoSMClass::ST_CLEANBOWL},
 
-        { SMClass::ST_RESET,         SMClass::EV_LOOP,            SMClass::ST_CHECK},
-        { SMClass::ST_RESET,         SMClass::EV_ANY,             SMClass::ST_RESET},
-        { SMClass::ST_RESET,         SMClass::EV_ERROR,           SMClass::ST_ERROR},
-        { SMClass::ST_ERROR,         SMClass::EV_ANY,             SMClass::ST_IDLE},
+        { PelicanoSMClass::ST_RESET,         PelicanoSMClass::EV_LOOP,            PelicanoSMClass::ST_CHECK},
+        { PelicanoSMClass::ST_RESET,         PelicanoSMClass::EV_ANY,             PelicanoSMClass::ST_RESET},
+        { PelicanoSMClass::ST_RESET,         PelicanoSMClass::EV_ERROR,           PelicanoSMClass::ST_ERROR},
+        { PelicanoSMClass::ST_ERROR,         PelicanoSMClass::EV_ANY,             PelicanoSMClass::ST_IDLE},
     };
 
-    void SMClass::InitStateMachine() {
-        SM.CurrState = SMClass::ST_IDLE; 
+    void PelicanoSMClass::InitStateMachine() {
+        SM.CurrState = PelicanoSMClass::ST_IDLE; 
         (PelicanoObject[0].*(StateFunctionValidatorPelicano[SM.CurrState].func))();
     }
 
-    int SMClass::RunCheck() {
+    int PelicanoSMClass::RunCheck() {
         int Response = -1;
         LS.CurrState = SM.CurrState; 
-        SM.CurrState = SMClass::ST_CHECK; 
+        SM.CurrState = PelicanoSMClass::ST_CHECK; 
         Response = (PelicanoObject[0].*(StateFunctionValidatorPelicano[SM.CurrState].func))();
         SM.CurrState = LS.CurrState;
         return Response;
     }
 
-    int SMClass::RunReset() {
+    int PelicanoSMClass::RunReset() {
         int Response = -1;
         LS.CurrState = SM.CurrState; 
-        SM.CurrState = SMClass::ST_RESET; 
+        SM.CurrState = PelicanoSMClass::ST_RESET; 
         Response = (PelicanoObject[0].*(StateFunctionValidatorPelicano[SM.CurrState].func))();
         SM.CurrState = LS.CurrState;
         return Response;
     }
 
-    int SMClass::RunClean() {
+    int PelicanoSMClass::RunClean() {
         int Response = -1;
         LS.CurrState = SM.CurrState; 
-        SM.CurrState = SMClass::ST_CLEANBOWL; 
+        SM.CurrState = PelicanoSMClass::ST_CLEANBOWL; 
         Response = (PelicanoObject[0].*(StateFunctionValidatorPelicano[SM.CurrState].func))();
         SM.CurrState = LS.CurrState;
         return Response;
     }
     
     
-    int SMClass::StateMachineRun(Event_t Event) {
+    int PelicanoSMClass::StateMachineRun(Event_t Event) {
         int Response = -1;
         for(long unsigned int i = 0; i < sizeof(StateTransition)/sizeof(StateTransition[0]); i++) {
             if(StateTransition[i].CurrState == SM.CurrState) {
@@ -123,7 +123,7 @@ namespace StateMachine{
         return Response;
     }
     
-    const char * SMClass::StateMachineGetStateName(State_t State) {
+    const char * PelicanoSMClass::StateMachineGetStateName(State_t State) {
         return StateFunctionValidatorPelicano[State].name;
     }
 };

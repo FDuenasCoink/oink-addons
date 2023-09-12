@@ -20,7 +20,7 @@
 
 namespace PelicanoControl{
 
-    using namespace StateMachine;
+    using namespace PelicanoStateMachine;
     using namespace ValidatorPelicano;
 
     struct Response_t{
@@ -58,7 +58,7 @@ namespace PelicanoControl{
         public:
             PelicanoClass PelicanoObject;
             PelicanoClass* PelicanoPointer;
-            SMClass SMObject;
+            PelicanoSMClass SMObject;
             GlobalVariables() : PelicanoObject(), PelicanoPointer(&PelicanoObject), SMObject(PelicanoPointer) {}
     };
 

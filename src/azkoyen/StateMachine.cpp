@@ -11,15 +11,15 @@
 
 #include "StateMachine.hpp"
 
-namespace StateMachine {
+namespace AzkoyenStateMachine {
 
     using namespace ValidatorAzkoyen;
 
     AzkoyenClass *AzkoyenObject;
 
-    SMClass::SMClass(ValidatorAzkoyen::AzkoyenClass *_AzkoyenClass_p){
+    AzkoyenSMClass::AzkoyenSMClass(ValidatorAzkoyen::AzkoyenClass *_AzkoyenClass_p){
         AzkoyenObject = _AzkoyenClass_p;
-        SM.CurrState = SMClass::ST_IDLE;
+        SM.CurrState = AzkoyenSMClass::ST_IDLE;
     };
 
     struct StateFunctionRow_t{
@@ -39,61 +39,61 @@ namespace StateMachine {
     };
 
     struct StateTransitionRow_t{
-        SMClass::State_t CurrState;
-        SMClass::Event_t Event;
-        SMClass::State_t NextState;
+        AzkoyenSMClass::State_t CurrState;
+        AzkoyenSMClass::Event_t Event;
+        AzkoyenSMClass::State_t NextState;
     } ;
     
     static StateTransitionRow_t StateTransition[] = {
         // CURR STATE       // EVENT            // NEXT STATE
-        { SMClass::ST_IDLE,          SMClass::EV_ANY,             SMClass::ST_CONNECT},
+        { AzkoyenSMClass::ST_IDLE,          AzkoyenSMClass::EV_ANY,             AzkoyenSMClass::ST_CONNECT},
 
-        { SMClass::ST_CONNECT,       SMClass::EV_SUCCESS_CONN,    SMClass::ST_CHECK},
-        { SMClass::ST_CONNECT,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { AzkoyenSMClass::ST_CONNECT,       AzkoyenSMClass::EV_SUCCESS_CONN,    AzkoyenSMClass::ST_CHECK},
+        { AzkoyenSMClass::ST_CONNECT,       AzkoyenSMClass::EV_ERROR,           AzkoyenSMClass::ST_ERROR},
 
-        { SMClass::ST_CHECK,         SMClass::EV_CALL_POLLING,    SMClass::ST_WAIT_POLL},
-        { SMClass::ST_CHECK,         SMClass::EV_CHECK,           SMClass::ST_CHECK},
-        { SMClass::ST_CHECK,         SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { AzkoyenSMClass::ST_CHECK,         AzkoyenSMClass::EV_CALL_POLLING,    AzkoyenSMClass::ST_WAIT_POLL},
+        { AzkoyenSMClass::ST_CHECK,         AzkoyenSMClass::EV_CHECK,           AzkoyenSMClass::ST_CHECK},
+        { AzkoyenSMClass::ST_CHECK,         AzkoyenSMClass::EV_ERROR,           AzkoyenSMClass::ST_ERROR},
 
-        { SMClass::ST_WAIT_POLL,     SMClass::EV_READY,           SMClass::ST_POLLING},
-        { SMClass::ST_WAIT_POLL,     SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { AzkoyenSMClass::ST_WAIT_POLL,     AzkoyenSMClass::EV_READY,           AzkoyenSMClass::ST_POLLING},
+        { AzkoyenSMClass::ST_WAIT_POLL,     AzkoyenSMClass::EV_ERROR,           AzkoyenSMClass::ST_ERROR},
 
-        { SMClass::ST_POLLING,       SMClass::EV_FINISH_POLL,     SMClass::ST_RESET},
-        { SMClass::ST_POLLING,       SMClass::EV_POLL,            SMClass::ST_POLLING},
-        { SMClass::ST_POLLING,       SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { AzkoyenSMClass::ST_POLLING,       AzkoyenSMClass::EV_FINISH_POLL,     AzkoyenSMClass::ST_RESET},
+        { AzkoyenSMClass::ST_POLLING,       AzkoyenSMClass::EV_POLL,            AzkoyenSMClass::ST_POLLING},
+        { AzkoyenSMClass::ST_POLLING,       AzkoyenSMClass::EV_ERROR,           AzkoyenSMClass::ST_ERROR},
 
-        { SMClass::ST_RESET,         SMClass::EV_LOOP,            SMClass::ST_CHECK},
-        { SMClass::ST_RESET,         SMClass::EV_ANY,             SMClass::ST_RESET},
-        { SMClass::ST_RESET,         SMClass::EV_ERROR,           SMClass::ST_ERROR},
+        { AzkoyenSMClass::ST_RESET,         AzkoyenSMClass::EV_LOOP,            AzkoyenSMClass::ST_CHECK},
+        { AzkoyenSMClass::ST_RESET,         AzkoyenSMClass::EV_ANY,             AzkoyenSMClass::ST_RESET},
+        { AzkoyenSMClass::ST_RESET,         AzkoyenSMClass::EV_ERROR,           AzkoyenSMClass::ST_ERROR},
 
-        { SMClass::ST_ERROR,         SMClass::EV_ANY,             SMClass::ST_IDLE},
+        { AzkoyenSMClass::ST_ERROR,         AzkoyenSMClass::EV_ANY,             AzkoyenSMClass::ST_IDLE},
 
     };
 
-    void SMClass::InitStateMachine() {
-        SM.CurrState = SMClass::ST_IDLE; 
+    void AzkoyenSMClass::InitStateMachine() {
+        SM.CurrState = AzkoyenSMClass::ST_IDLE; 
         (AzkoyenObject[0].*(StateFunctionValidatorAzkoyen[SM.CurrState].func))();
     }
 
-    int SMClass::RunCheck() {
+    int AzkoyenSMClass::RunCheck() {
         int Response = -1;
         LS.CurrState = SM.CurrState; 
-        SM.CurrState = SMClass::ST_CHECK; 
+        SM.CurrState = AzkoyenSMClass::ST_CHECK; 
         Response = (AzkoyenObject[0].*(StateFunctionValidatorAzkoyen[SM.CurrState].func))();
         SM.CurrState = LS.CurrState;
         return Response;
     }
 
-    int SMClass::RunReset() {
+    int AzkoyenSMClass::RunReset() {
         int Response = -1;
         LS.CurrState = SM.CurrState; 
-        SM.CurrState = SMClass::ST_RESET; 
+        SM.CurrState = AzkoyenSMClass::ST_RESET; 
         Response = (AzkoyenObject[0].*(StateFunctionValidatorAzkoyen[SM.CurrState].func))();
         SM.CurrState = LS.CurrState;
         return Response;
     }
     
-    int SMClass::StateMachineRun(Event_t Event) {
+    int AzkoyenSMClass::StateMachineRun(Event_t Event) {
         int Response = -1;
         for(long unsigned int i = 0; i < sizeof(StateTransition)/sizeof(StateTransition[0]); i++) {
             if(StateTransition[i].CurrState == SM.CurrState) {
@@ -108,7 +108,7 @@ namespace StateMachine {
         return 0;
     }
     
-    const char * SMClass::StateMachineGetStateName(State_t State) {
+    const char * AzkoyenSMClass::StateMachineGetStateName(State_t State) {
         return StateFunctionValidatorAzkoyen[State].name;
     }
 };

@@ -120,7 +120,7 @@ Napi::Value NV10Wrapper::StopReader(const Napi::CallbackInfo& info) {
 Napi::Value NV10Wrapper::Reject(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
-  Response_t response = this->nv10Control_->ResetDevice();
+  Response_t response = this->nv10Control_->Reject();
   Napi::Object object = Napi::Object::New(env);
   object["message"] = Napi::String::New(env, response.Message);
   object["statusCode"] = Napi::Number::New(env, response.StatusCode);

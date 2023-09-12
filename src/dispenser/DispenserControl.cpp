@@ -13,7 +13,7 @@
 
 namespace DispenserControl{
 
-    using namespace StateMachine;
+    using namespace DispenserStateMachine;
     using namespace Dispenser;
 
     // --------------- EXTERNAL VARIABLES --------------------//
@@ -82,7 +82,7 @@ namespace DispenserControl{
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         //Cambio de estado: ST_IDLE ---> ST_CONNECT
-        Connection = Globals.SMObject.StateMachineRun(SMClass::EV_ANY);
+        Connection = Globals.SMObject.StateMachineRun(DispenserSMClass::EV_ANY);
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         if (Connection == 0){
@@ -90,13 +90,13 @@ namespace DispenserControl{
             PortO = Globals.DispenserObject.PortO;
 
             //Cambio de estado: ST_CONNECT ---> ST_INIT
-            Init = Globals.SMObject.StateMachineRun(SMClass::EV_SUCCESS_CONN);
+            Init = Globals.SMObject.StateMachineRun(DispenserSMClass::EV_SUCCESS_CONN);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
             if (Init == 0){
 
                 //Cambio de estado: ST_INIT ---> ST_WAIT
-                Check = Globals.SMObject.StateMachineRun(SMClass::EV_SUCCESS_INIT);
+                Check = Globals.SMObject.StateMachineRun(DispenserSMClass::EV_SUCCESS_INIT);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                 if (Check == 0){
@@ -123,7 +123,7 @@ namespace DispenserControl{
         
         if ((Response.StatusCode == 404) | (Response.StatusCode == 501) | (Response.StatusCode == 502) | (Response.StatusCode == 503)){
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(DispenserSMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 
@@ -153,7 +153,7 @@ namespace DispenserControl{
 
         if ((Response.StatusCode == 404) | (Response.StatusCode == 500) | (Response.StatusCode == 507)){
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(DispenserSMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 
@@ -239,7 +239,7 @@ namespace DispenserControl{
             if ((Response.StatusCode == 201) | (Response.StatusCode == 202) | (Response.StatusCode == 302) | (Response.StatusCode == 303)){
 
                 //Cambio de estado: ST_WAIT ---> ST_MOVING_MOTOR
-                Dispense = Globals.SMObject.StateMachineRun(SMClass::EV_CALL_DISPENSING);
+                Dispense = Globals.SMObject.StateMachineRun(DispenserSMClass::EV_CALL_DISPENSING);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                 if (Dispense == 0){
@@ -315,7 +315,7 @@ namespace DispenserControl{
         if ((Response.StatusCode == 500) | (Response.StatusCode == 504) | (Response.StatusCode == 507) |
             (Response.StatusCode == 508) | (Response.StatusCode == 509)){
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(DispenserSMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 
@@ -355,7 +355,7 @@ namespace DispenserControl{
                 else if ((Globals.DispenserObject.CardInGate) & (Globals.DispenserObject.RecyclingBoxFull == false)){
 
                     //Cambio de estado: ST_WAIT/ST_MOVING_MOTOR ---> ST_HANDING_CARD
-                    Recycle = Globals.SMObject.StateMachineRun(SMClass::EV_CARD_IN_GATE);
+                    Recycle = Globals.SMObject.StateMachineRun(DispenserSMClass::EV_CARD_IN_GATE);
                     //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
                     if (Recycle == 0){
@@ -429,7 +429,7 @@ namespace DispenserControl{
             Response.StatusCode = 507;
             Response.Message = "Fallo con el dispensador. No responde";
 
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(DispenserSMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 
@@ -463,7 +463,7 @@ namespace DispenserControl{
         if (FlagReady){
 
             //Cambio de estado: ST_HANDING_CARD/ST_MOVING_MOTOR ---> ST_WAIT
-            Check = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH);
+            Check = Globals.SMObject.StateMachineRun(DispenserSMClass::EV_FINISH);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
             if (Check == 0){

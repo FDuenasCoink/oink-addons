@@ -47,13 +47,13 @@ DispenserWrapper::DispenserWrapper(const Napi::CallbackInfo& info) : Napi::Objec
   Napi::Number LogLvl = params.Get("logLevel").ToNumber();
   Napi::String LogFilePath = params.Get("logPath").ToString();
 
-  this->azkoyenControl_ = new DispenserControlClass();
-  this->azkoyenControl_->Path = LogFilePath.Utf8Value();
-  this->azkoyenControl_->LogLvl = LogLvl.Uint32Value();
-  this->azkoyenControl_->MaximumPorts = MaximumPorts.Int32Value();
-  this->azkoyenControl_->MaxInitAttempts = MaxInitAttempts.Int32Value();
-  this->azkoyenControl_->ShortTime = ShortTime.Int32Value();
-  this->azkoyenControl_->LongTime = LongTime.Int32Value();
+  this->dispenserControl_ = new DispenserControlClass();
+  this->dispenserControl_->Path = LogFilePath.Utf8Value();
+  this->dispenserControl_->LogLvl = LogLvl.Uint32Value();
+  this->dispenserControl_->MaximumPorts = MaximumPorts.Int32Value();
+  this->dispenserControl_->MaxInitAttempts = MaxInitAttempts.Int32Value();
+  this->dispenserControl_->ShortTime = ShortTime.Int32Value();
+  this->dispenserControl_->LongTime = LongTime.Int32Value();
 
   this->dispenserControl_->InitLog();
 }

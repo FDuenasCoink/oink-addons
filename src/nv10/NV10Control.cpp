@@ -13,7 +13,7 @@
 
 namespace NV10Control{
 
-    using namespace StateMachine;
+    using namespace NV10StateMachine;
     using namespace ValidatorNV10;
 
     // --------------- EXTERNAL VARIABLES --------------------//
@@ -79,14 +79,14 @@ namespace NV10Control{
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         //Cambio de estado: ST_IDLE ---> ST_CONNECT
-        Connection = Globals.SMObject.StateMachineRun(SMClass::EV_ANY);
+        Connection = Globals.SMObject.StateMachineRun(NV10SMClass::EV_ANY);
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
         if (Connection == 0){
             
             PortO = Globals.NV10Object.PortO;
             //Cambio de estado: ST_CONNECT ---> ST_DISABLE
-            Disable = Globals.SMObject.StateMachineRun(SMClass::EV_SUCCESS_CONN);
+            Disable = Globals.SMObject.StateMachineRun(NV10SMClass::EV_SUCCESS_CONN);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
 
             if (Disable == 0){
@@ -105,7 +105,7 @@ namespace NV10Control{
         
         if (Response.StatusCode != 200){
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(NV10SMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 
@@ -131,7 +131,7 @@ namespace NV10Control{
 
         if (Response.StatusCode != 201){
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(NV10SMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 
@@ -167,11 +167,11 @@ namespace NV10Control{
         if (FlagReady){
             //Si llega hasta este punto, debe estar en el estado ST_DISABLE
             //Cambio de estado: ST_DISABLE ---> ST_ENABLE
-            Enable = Globals.SMObject.StateMachineRun(SMClass::EV_READY);
+            Enable = Globals.SMObject.StateMachineRun(NV10SMClass::EV_READY);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
             if (Enable == 0){
                 //Cambio de estado: ST_ENABLE ---> ST_POLLING
-                Poll = Globals.SMObject.StateMachineRun(SMClass::EV_CALL_POLLING);
+                Poll = Globals.SMObject.StateMachineRun(NV10SMClass::EV_CALL_POLLING);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 if (Poll == 0){
                     Response.StatusCode = 202;
@@ -194,7 +194,7 @@ namespace NV10Control{
 
         if ((Response.StatusCode != 202) & (Response.StatusCode != 203)){
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(NV10SMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
         return Response;
@@ -222,7 +222,7 @@ namespace NV10Control{
         if (strcmp(Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState), "ST_POLLING") == 0){
 
             //Cambio de estado: ST_POLLING ---> ST_POLLING
-            Poll = Globals.SMObject.StateMachineRun(SMClass::EV_POLL);
+            Poll = Globals.SMObject.StateMachineRun(NV10SMClass::EV_POLL);
 
             //Si Poll retorna una lectura valida entra aca
             if (Poll == 0){
@@ -462,11 +462,11 @@ namespace NV10Control{
         //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         if (strcmp(Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState), "ST_POLLING") == 0){
             //Cambio de estado: ST_POLLING ---> ST_CHECK
-            Check = Globals.SMObject.StateMachineRun(SMClass::EV_FINISH_POLL);
+            Check = Globals.SMObject.StateMachineRun(NV10SMClass::EV_FINISH_POLL);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
             if (Check == 0){
                 //Cambio de estado: ST_CHECK ---> ST_DISABLE
-                Disable = Globals.SMObject.StateMachineRun(SMClass::EV_LOOP);
+                Disable = Globals.SMObject.StateMachineRun(NV10SMClass::EV_LOOP);
                 //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
                 if (Disable == 0){
                     Response.StatusCode = 205;
@@ -489,7 +489,7 @@ namespace NV10Control{
 
         if (Response.StatusCode != 205) {
             //Cambio de estado: [Cualquiera] ---> ST_ERROR
-            Globals.SMObject.StateMachineRun(SMClass::EV_ERROR);
+            Globals.SMObject.StateMachineRun(NV10SMClass::EV_ERROR);
             //std::cout<<"[MAIN] Estado actual: "<<Globals.SMObject.StateMachineGetStateName(Globals.SMObject.SM.CurrState)<<std::endl;
         }
 

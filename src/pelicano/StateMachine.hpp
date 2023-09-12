@@ -9,16 +9,16 @@
  * 
  */
 
-#ifndef STATEMACHINE_HPP
-#define STATEMACHINE_HPP
+#ifndef STATEMACHINE_HPP_PELICANO
+#define STATEMACHINE_HPP_PELICANO
 
 #include "ValidatorPelicano.hpp"
 
-namespace StateMachine{
+namespace PelicanoStateMachine{
 
     using namespace ValidatorPelicano;
     
-    class SMClass{
+    class PelicanoSMClass{
         public:
 
             enum State_t{
@@ -54,7 +54,7 @@ namespace StateMachine{
              * @brief Construct a new SMClass object
              * @param _PelicanoClass_p Apuntador a la clase del archivo ValidatorPelicano.cpp
              */
-            SMClass(ValidatorPelicano::PelicanoClass *_PelicanoClass_p);
+            PelicanoSMClass(ValidatorPelicano::PelicanoClass *_PelicanoClass_p);
 
             /**
              * @brief Estado actual de la maquina de estados

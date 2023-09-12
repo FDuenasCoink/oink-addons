@@ -9,16 +9,16 @@
  * 
  */
 
-#ifndef STATEMACHINE_HPP
-#define STATEMACHINE_HPP
+#ifndef STATEMACHINE_HPP_AZKOYEN
+#define STATEMACHINE_HPP_AZKOYEN
 
 #include "ValidatorAzkoyen.hpp"
 
-namespace StateMachine {
+namespace AzkoyenStateMachine {
 
     using namespace ValidatorAzkoyen;
     
-    class SMClass{
+    class AzkoyenSMClass{
         public:
 
             enum State_t{
@@ -51,7 +51,7 @@ namespace StateMachine {
              * @brief Construct a new SMClass object
              * @param _AzkoyenClass_p Apuntador a la clase del archivo ValidatorAzkoyen.cpp
              */
-            SMClass(ValidatorAzkoyen::AzkoyenClass *_AzkoyenClass_p);
+            AzkoyenSMClass(ValidatorAzkoyen::AzkoyenClass *_AzkoyenClass_p);
 
             /**
              * @brief Estado actual de la maquina de estados

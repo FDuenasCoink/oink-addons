@@ -9,16 +9,16 @@
  * 
  */
 
-#ifndef STATEMACHINE_HPP
-#define STATEMACHINE_HPP
+#ifndef STATEMACHINE_HPP_NV10
+#define STATEMACHINE_HPP_NV10
 
 #include "ValidatorNV10.hpp"
 
-namespace StateMachine{
+namespace NV10StateMachine{
 
     using namespace ValidatorNV10;
     
-    class SMClass{
+    class NV10SMClass{
         public:
 
             enum State_t{
@@ -52,7 +52,7 @@ namespace StateMachine{
              * @brief Construct a new SMClass object
              * @param _NV10Class_p Apuntador a la clase del archivo ValidatorNV10.cpp
              */
-            SMClass(ValidatorNV10::NV10Class *_NV10Class_p);
+            NV10SMClass(ValidatorNV10::NV10Class *_NV10Class_p);
 
             /**
              * @brief Estado actual de la maquina de estados
