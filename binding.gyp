@@ -43,5 +43,23 @@
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
         'defines': ['NAPI_CPP_EXCEPTIONS'],
+        'conditions': [
+            ['OS=="mac"', {
+            'xcode_settings': {
+              'OTHER_CFLAGS': [
+                '-arch x86_64',
+                '-arch arm64'
+              ],
+              'OTHER_LDFLAGS': [
+                '-framework', 'CoreFoundation',
+                '-framework', 'IOKit',
+                '-arch x86_64',
+                '-arch arm64'
+              ],
+              'SDKROOT': 'macosx',
+              'MACOSX_DEPLOYMENT_TARGET': '10.7'
+            }
+          }],
+        ]
     }]
 }

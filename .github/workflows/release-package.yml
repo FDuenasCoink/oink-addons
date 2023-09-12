@@ -14,16 +14,8 @@ jobs:
             node: x64
             command: prebuildify
             args: --arch x64+arm64
-          - name: win32-x86
-            os: windows-2019
-            node: x86
-            command: prebuildify
-          - name: win32-x64
-            os: windows-2019
-            node: x64
-            command: prebuildify
           - name: linux-arm
-            os: ubuntu-latest
+            os: ubuntu-20.04
             command: prebuildify-cross
             args: -i linux-arm64-lts -i linux-armv7 -i linux-armv6
     name: Build ${{ matrix.name }}
