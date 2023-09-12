@@ -1,6 +1,6 @@
 import { CommandResponse, DeviceStatus } from "./interface"
 
-export interface DispenserObj {
+export interface IDispenser {
   connect(): CommandResponse;
   checkDevice(): CommandResponse;
   dispenseCard(): CommandResponse;

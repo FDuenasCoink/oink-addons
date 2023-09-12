@@ -1,6 +1,6 @@
 import { CommandResponse, DeviceStatus } from "./interface"
 
-export interface NV10Obj {
+export interface INV10 {
   connect(): CommandResponse;
   checkDevice(): CommandResponse;
   startReader(): CommandResponse;
