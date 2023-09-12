@@ -1,3 +1,4 @@
+import { DispenserObj, DispenserOptions } from "./dispenser.interface";
 import { ValidatorOptions, ValidatorObj } from "./interface";
 import { join } from 'path';
 
@@ -12,3 +13,6 @@ export var Azkoyen: {
   new (options: ValidatorOptions): ValidatorObj
 } = addons.Azkoyen;
 
+export var Dispenser: {
+  new (options: DispenserOptions): DispenserObj
+} = addons.Dispenser;

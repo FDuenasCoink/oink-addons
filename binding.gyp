@@ -20,6 +20,10 @@
             "src/azkoyen/StateMachine.cpp",
             "src/azkoyen/ValidatorAzkoyen.cpp",
             "src/azkoyen/Azkoyen.cpp",
+            "src/dispenser/Dispenser.cpp",
+            "src/dispenser/DispenserControl.cpp",
+            "src/dispenser/DispenserWrapper.cpp",
+            "src/dispenser/StateMachine.cpp",
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")",
