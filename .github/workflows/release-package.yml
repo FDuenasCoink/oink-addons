@@ -17,7 +17,7 @@ jobs:
           - name: linux-arm
             os: ubuntu-20.04
             command: prebuildify-cross
-            args: -i linux-arm64-lts -i linux-armv7 -i linux-armv6
+            args: -i ghcr.io/node-usb/linux-arm64 -i ghcr.io/node-usb/linux-armv7 -i ghcr.io/node-usb/linux-armv6
     name: Build ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
