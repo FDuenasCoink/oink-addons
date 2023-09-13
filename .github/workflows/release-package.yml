@@ -27,7 +27,7 @@ jobs:
           node-version: 18.x
           architecture: ${{ matrix.node }}
       - uses: actions/checkout@v3
-      - run: npm ci --ignore-scripts
+      - run: npm ci
       - run: npm run ${{ matrix.command }} -- ${{ matrix.args }}
       - uses: actions/upload-artifact@v3
         with:
