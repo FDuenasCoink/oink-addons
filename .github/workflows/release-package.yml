@@ -17,7 +17,7 @@ jobs:
           - name: linux-arm
             os: ubuntu-20.04
             command: prebuildify-cross
-            args: -i ghcr.io/node-usb/linux-arm64 -i ghcr.io/node-usb/linux-armv7 -i ghcr.io/node-usb/linux-armv6
+            args: -i linux-arm64-lts -i linux-armv7 -i linux-armv6
     name: Build ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -27,7 +27,7 @@ jobs:
           node-version: 18.x
           architecture: ${{ matrix.node }}
       - uses: actions/checkout@v3
-      - run: npm ci --ignore-scripts
+      - run: npm ci
       - run: npm run ${{ matrix.command }} -- ${{ matrix.args }}
       - uses: actions/upload-artifact@v3
         with:
@@ -53,7 +53,7 @@ jobs:
         with:
           node-version: 18.x
           registry-url: https://npm.pkg.github.com/
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - run: npm publish
         env:
