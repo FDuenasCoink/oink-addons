@@ -12,7 +12,7 @@
         },
         'msvs_settings': {
             'VCCLCompilerTool': {
-            'ExceptionHandling': 1
+                'ExceptionHandling': 1
             }
         },
         "sources": [
@@ -39,9 +39,6 @@
             "src/spdlog/include"
         ],
         'libraries': [],
-        'dependencies': [
-            "<!(node -p \"require('node-addon-api').gyp\")"
-        ],
         'defines': ['NAPI_CPP_EXCEPTIONS'],
         'conditions': [
             ['OS=="mac"', {
