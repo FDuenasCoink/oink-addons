@@ -35,7 +35,7 @@
             "src/nv10/ValidatorNV10.cpp",
         ],
         'include_dirs': [
-            "<!@(node -p \"require('node-addon-api').include\")",
+            "<!(node -p \"require('node-addon-api').include_dir\")",
             "src/spdlog/include"
         ],
         'libraries': [],
