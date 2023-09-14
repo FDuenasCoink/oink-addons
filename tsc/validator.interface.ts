@@ -11,6 +11,7 @@ export interface IValidator {
   resetDevice(): CommandResponse;
   testStatus(): DeviceStatus;
   cleanDevice(): CommandResponse;
+  onCoin(callback: (message: string) => void): string;
 }
 
 export interface ValidatorOptions {

@@ -1,4 +1,6 @@
 #include <napi.h>
+#include <thread>
+#include <chrono>
 #include "AzkoyenControl.hpp"
 
 using namespace AzkoyenControl;
@@ -19,5 +21,6 @@ class Azkoyen : public Napi::ObjectWrap<Azkoyen> {
     Napi::Value ResetDevice(const Napi::CallbackInfo& info);
     Napi::Value TestStatus(const Napi::CallbackInfo& info);
     Napi::Value CleanDevice(const Napi::CallbackInfo& info);
+    Napi::Value OnCoin(const Napi::CallbackInfo& info);
     AzkoyenControlClass *azkoyenControl_;
 };
