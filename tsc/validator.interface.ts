@@ -1,5 +1,7 @@
 import { CommandResponse, DeviceStatus } from "./interface";
 
+export type UnsubscribeFunc = () => void;
+
 export interface IValidator {
   connect(): CommandResponse;
   checkDevice(): CommandResponse;
@@ -11,7 +13,7 @@ export interface IValidator {
   resetDevice(): CommandResponse;
   testStatus(): DeviceStatus;
   cleanDevice(): CommandResponse;
-  onCoin(callback: (message: string) => void): string;
+  onCoin(callback: (coin: CoinResult) => void): UnsubscribeFunc;
 }
 
 export interface ValidatorOptions {
