@@ -1,4 +1,4 @@
-import { CommandResponse, DeviceStatus } from "./interface"
+import { CommandResponse, DeviceStatus, UnsubscribeFunc } from "./interface"
 
 export interface IDispenser {
   connect(): CommandResponse;
@@ -8,6 +8,7 @@ export interface IDispenser {
   endProcess(): CommandResponse;
   getDispenserFlags(): DispenserFlags;
   testStatus(): DeviceStatus;
+  onDispense(callback: (dispenseStatus: CommandResponse) => void): UnsubscribeFunc;
 }
 
 export interface DispenserOptions {

@@ -1,4 +1,4 @@
-import { CommandResponse, DeviceStatus } from "./interface"
+import { CommandResponse, DeviceStatus, UnsubscribeFunc } from "./interface"
 
 export interface INV10 {
   connect(): CommandResponse;
@@ -9,6 +9,7 @@ export interface INV10 {
   stopReader(): CommandResponse;
   reject(): CommandResponse;
   testStatus(): DeviceStatus;
+  onBill(callback: (bill: Bill) => void): UnsubscribeFunc;
 }
 
 export interface NV10Options {

@@ -12,3 +12,5 @@ export interface DeviceStatus {
   aditionalInfo: string;
   priority: number;
 }
+
+export type UnsubscribeFunc = () => void;

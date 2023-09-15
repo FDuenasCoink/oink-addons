@@ -1,33 +1,21 @@
-const { Azkoyen } = require('../dist');
+const { Dispenser } = require('../dist');
 
-const azkoyen = new Azkoyen({
-  maxCritical: 4,
-  warnToCritical: 10,
-  maximumPorts: 10,
+const dispenser = new Dispenser({
+  logPath: 'logs/dispenser.log',
   logLevel: 1,
-  logPath: 'logs/pelicano.log',
+  maximumPorts: 10,
+  maxInitAttempts: 4,
+  shortTime: 0,
+  longTime: 3,
 });
 
+const result = dispenser.dispenseCard();
+console.log(result);
+const stop = dispenser.onDispense((status) => {
+  console.log({ status });
+});
 
-function run() {
-  return new Promise(resolve => {
-    const stopFn = azkoyen.onCoin((message) => {
-      console.log({ message });
-    });
-    setTimeout(() => {
-      console.log('voy a parar todo!');
-      stopFn();
-      resolve();
-    }, 1_000);
-  });
-}
-
-function delay() {
-  return new Promise(resolve => {
-    setTimeout(resolve, 0);
-  }); 
-}
-
-(async () => {
-  await run();
-})();
+setTimeout(() => {
+  console.log('Finalizando!');
+  stop();
+}, 2_000);

@@ -1,4 +1,6 @@
 #include <napi.h>
+#include <thread>
+#include <chrono>
 #include "NV10Control.hpp"
 
 using namespace NV10Control;
@@ -17,5 +19,6 @@ class NV10Wrapper : public Napi::ObjectWrap<NV10Wrapper> {
     Napi::Value StopReader(const Napi::CallbackInfo& info);
     Napi::Value Reject(const Napi::CallbackInfo& info);
     Napi::Value TestStatus(const Napi::CallbackInfo& info);
+    Napi::Value OnBill(const Napi::CallbackInfo& info);
     NV10ControlClass *nv10Control_;
 };

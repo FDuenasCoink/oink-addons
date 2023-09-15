@@ -1,4 +1,6 @@
 #include <napi.h>
+#include <thread>
+#include <chrono>
 #include "PelicanoControl.hpp"
 
 using namespace PelicanoControl;
@@ -19,5 +21,6 @@ class Pelicano : public Napi::ObjectWrap<Pelicano> {
     Napi::Value ResetDevice(const Napi::CallbackInfo& info);
     Napi::Value TestStatus(const Napi::CallbackInfo& info);
     Napi::Value CleanDevice(const Napi::CallbackInfo& info);
+    Napi::Value OnCoin(const Napi::CallbackInfo& info);
     PelicanoControlClass *pelicanoControl_;
 };

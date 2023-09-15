@@ -1,4 +1,9 @@
-#include "Pelicano.h"
+#include "Pelicano.hpp"
+
+std::thread nativeThreadPelicano;
+Napi::ThreadSafeFunction tsfnPelicano;
+static bool isRunningPelicano = true;
+static bool threadEndedPelicano = true;
 
 Napi::FunctionReference Pelicano::constructor;
 
@@ -15,6 +20,7 @@ Napi::Object Pelicano::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("resetDevice", &Pelicano::ResetDevice),
     InstanceMethod("testStatus", &Pelicano::TestStatus),
     InstanceMethod("cleanDevice", &Pelicano::CleanDevice),
+    InstanceMethod("onCoin", &Pelicano::OnCoin),
   });
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
@@ -134,6 +140,7 @@ Napi::Value Pelicano::ModifyChannels(const Napi::CallbackInfo& info) {
 Napi::Value Pelicano::StopReader(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
+  isRunningPelicano = false;
   Response_t response = this->pelicanoControl_->StopReader();
   Napi::Object object = Napi::Object::New(env);
   object["message"] = Napi::String::New(env, response.Message);
@@ -174,4 +181,59 @@ Napi::Value Pelicano::CleanDevice(const Napi::CallbackInfo &info) {
   object["message"] = Napi::String::New(env, response.Message);
   object["statusCode"] = Napi::Number::New(env, response.StatusCode);
   return object;
+}
+
+Napi::Value Pelicano::OnCoin(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(env);
+
+  if (info.Length() != 1 || !info[0].IsFunction()) {
+    Napi::TypeError::New(env, "Invalid params").ThrowAsJavaScriptException();
+  }
+  
+  Napi::Function napiFunction = info[0].As<Napi::Function>();
+  tsfnPelicano = Napi::ThreadSafeFunction::New(
+    env, 
+    napiFunction, 
+    "Callback", 
+    0, 
+    1,
+    []( Napi::Env ) {
+      nativeThreadPelicano.join();
+    });
+
+  nativeThreadPelicano = std::thread ( [this] {
+    auto callback = [](Napi::Env env, Napi::Function jsCallback, CoinError_t* coin) {
+      Napi::Object object = Napi::Object::New(env);
+      object["statusCode"] = Napi::Number::New(env, coin->StatusCode);
+      object["event"] = Napi::Number::New(env, coin->Event);
+      object["coin"] = Napi::Number::New(env, coin->Coin);
+      object["message"] = Napi::String::New(env, coin->Message);
+      object["remaining"] = Napi::Number::New(env, coin->Remaining);
+      jsCallback.Call({object});
+      delete coin;
+    };
+    isRunningPelicano = true;
+    threadEndedPelicano = false;
+    while (isRunningPelicano) {
+      CoinError_t response = this->pelicanoControl_->GetCoin();
+      if (response.StatusCode == 303) continue;
+      CoinError_t *value = new CoinError_t(response);
+      napi_status status = tsfnPelicano.BlockingCall(value, callback);
+      if ( status != napi_ok ) break;
+      std::this_thread::sleep_for( std::chrono::milliseconds(10));
+    }
+    threadEndedPelicano = true;
+    tsfnPelicano.Release();
+  });
+
+  auto finishFn = [] (const Napi::CallbackInfo& info) {
+    isRunningPelicano = false;
+    while (!threadEndedPelicano);
+    std::this_thread::sleep_for( std::chrono::milliseconds(50));
+    return;
+  };
+
+  return Napi::Function::New(env, finishFn);
 }

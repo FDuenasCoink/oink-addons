@@ -1,9 +1,9 @@
 #include "Azkoyen.hpp"
 
 
-std::thread nativeThread;
-Napi::ThreadSafeFunction tsfn;
-static bool isRunning = true;
+std::thread nativeThreadAzkoyen;
+Napi::ThreadSafeFunction tsfnAzkoyen;
+static bool isRunningAzkoyen = true;
 static bool threadEnded = true;
 
 Napi::FunctionReference Azkoyen::constructor;
@@ -141,6 +141,7 @@ Napi::Value Azkoyen::ModifyChannels(const Napi::CallbackInfo& info) {
 Napi::Value Azkoyen::StopReader(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
+  isRunningAzkoyen = false;
   Response_t response = this->azkoyenControl_->StopReader();
   Napi::Object object = Napi::Object::New(env);
   object["message"] = Napi::String::New(env, response.Message);
@@ -179,7 +180,6 @@ Napi::Value Azkoyen::CleanDevice(const Napi::CallbackInfo &info) {
   return Napi::Number::New(env, 0);
 }
 
-
 Napi::Value Azkoyen::OnCoin(const Napi::CallbackInfo &info)
 {
   Napi::Env env = info.Env();
@@ -190,17 +190,17 @@ Napi::Value Azkoyen::OnCoin(const Napi::CallbackInfo &info)
   }
   
   Napi::Function napiFunction = info[0].As<Napi::Function>();
-  tsfn = Napi::ThreadSafeFunction::New(
+  tsfnAzkoyen = Napi::ThreadSafeFunction::New(
     env, 
     napiFunction, 
     "Callback", 
     0, 
     1,
     []( Napi::Env ) {
-      nativeThread.join();
+      nativeThreadAzkoyen.join();
     });
 
-  nativeThread = std::thread ( [this] {
+  nativeThreadAzkoyen = std::thread ( [this] {
     auto callback = [](Napi::Env env, Napi::Function jsCallback, CoinError_t* coin) {
       Napi::Object object = Napi::Object::New(env);
       object["statusCode"] = Napi::Number::New(env, coin->StatusCode);
@@ -211,22 +211,22 @@ Napi::Value Azkoyen::OnCoin(const Napi::CallbackInfo &info)
       jsCallback.Call({object});
       delete coin;
     };
-    isRunning = true;
+    isRunningAzkoyen = true;
     threadEnded = false;
-    while (isRunning) {
+    while (isRunningAzkoyen) {
       CoinError_t response = this->azkoyenControl_->GetCoin();
-      if (response.StatusCode === 303) continue;
+      if (response.StatusCode == 303) continue;
       CoinError_t *value = new CoinError_t(response);
-      napi_status status = tsfn.BlockingCall(value, callback);
+      napi_status status = tsfnAzkoyen.BlockingCall(value, callback);
       if ( status != napi_ok ) break;
       std::this_thread::sleep_for( std::chrono::milliseconds(10));
     }
     threadEnded = true;
-    tsfn.Release();
+    tsfnAzkoyen.Release();
   });
 
   auto finishFn = [] (const Napi::CallbackInfo& info) {
-    isRunning = false;
+    isRunningAzkoyen = false;
     while (!threadEnded);
     std::this_thread::sleep_for( std::chrono::milliseconds(50));
     return;

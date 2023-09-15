@@ -1,5 +1,10 @@
 #include "NV10Wrapper.hpp"
 
+std::thread nativeThreadNv10;
+Napi::ThreadSafeFunction tsfnNv10;
+static bool isRunningNv10 = true;
+static bool threadEndedNv10 = true;
+
 Napi::FunctionReference NV10Wrapper::constructor;
 
 Napi::Object NV10Wrapper::Init(Napi::Env env, Napi::Object exports) {
@@ -13,6 +18,7 @@ Napi::Object NV10Wrapper::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("stopReader", &NV10Wrapper::StopReader),
     InstanceMethod("reject", &NV10Wrapper::Reject),
     InstanceMethod("testStatus", &NV10Wrapper::TestStatus),
+    InstanceMethod("onBill", &NV10Wrapper::OnBill),
   });
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
@@ -110,6 +116,7 @@ Napi::Value NV10Wrapper::ModifyChannels(const Napi::CallbackInfo& info) {
 Napi::Value NV10Wrapper::StopReader(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
+  isRunningNv10 = false;
   Response_t response = this->nv10Control_->StopReader();
   Napi::Object object = Napi::Object::New(env);
   object["message"] = Napi::String::New(env, response.Message);
@@ -140,4 +147,58 @@ Napi::Value NV10Wrapper::TestStatus(const Napi::CallbackInfo& info) {
   object["aditionalInfo"] = Napi::String::New(env, response.AditionalInfo);
   object["priority"] = Napi::Number::New(env, response.Priority);
   return object;
+}
+
+
+Napi::Value NV10Wrapper::OnBill(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(env);
+
+  if (info.Length() != 1 || !info[0].IsFunction()) {
+    Napi::TypeError::New(env, "Invalid params").ThrowAsJavaScriptException();
+  }
+  
+  Napi::Function napiFunction = info[0].As<Napi::Function>();
+  tsfnNv10 = Napi::ThreadSafeFunction::New(
+    env, 
+    napiFunction, 
+    "Callback", 
+    0, 
+    1,
+    []( Napi::Env ) {
+      nativeThreadNv10.join();
+    });
+
+  nativeThreadNv10 = std::thread ( [this] {
+    auto callback = [](Napi::Env env, Napi::Function jsCallback, BillError_t* bill) {
+      Napi::Object object = Napi::Object::New(env);
+      object["statusCode"] = Napi::Number::New(env, bill->StatusCode);
+      object["bill"] = Napi::Number::New(env, bill->Bill);
+      object["message"] = Napi::String::New(env, bill->Message);
+      jsCallback.Call({object});
+      delete bill;
+    };
+    isRunningNv10 = true;
+    threadEndedNv10 = false;
+    while (isRunningNv10) {
+      BillError_t response = this->nv10Control_->GetBill();
+      if (response.StatusCode == 302) continue;
+      BillError_t *value = new BillError_t(response);
+      napi_status status = tsfnNv10.BlockingCall(value, callback);
+      if ( status != napi_ok ) break;
+      std::this_thread::sleep_for( std::chrono::milliseconds(10));
+    }
+    threadEndedNv10 = true;
+    tsfnNv10.Release();
+  });
+
+  auto finishFn = [] (const Napi::CallbackInfo& info) {
+    isRunningNv10 = false;
+    while (!threadEndedNv10);
+    std::this_thread::sleep_for( std::chrono::milliseconds(50));
+    return;
+  };
+
+  return Napi::Function::New(env, finishFn);
 }

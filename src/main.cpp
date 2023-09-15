@@ -1,6 +1,6 @@
 #include <napi.h>
 #include "azkoyen/Azkoyen.hpp"
-#include "pelicano/Pelicano.h"
+#include "pelicano/Pelicano.hpp"
 #include "dispenser/DispenserWrapper.hpp"
 #include "nv10/NV10Wrapper.hpp"
 

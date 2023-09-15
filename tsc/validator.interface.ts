@@ -1,6 +1,4 @@
-import { CommandResponse, DeviceStatus } from "./interface";
-
-export type UnsubscribeFunc = () => void;
+import { CommandResponse, DeviceStatus, UnsubscribeFunc } from "./interface";
 
 export interface IValidator {
   connect(): CommandResponse;

@@ -1,4 +1,6 @@
 #include <napi.h>
+#include <thread>
+#include <chrono>
 #include "DispenserControl.hpp"
 
 using namespace DispenserControl;
@@ -16,5 +18,6 @@ class DispenserWrapper : public Napi::ObjectWrap<DispenserWrapper> {
     Napi::Value EndProcess(const Napi::CallbackInfo& info);
     Napi::Value GetDispenserFlags(const Napi::CallbackInfo& info);
     Napi::Value TestStatus(const Napi::CallbackInfo& info);
+    Napi::Value OnDispense(const Napi::CallbackInfo& info);
     DispenserControlClass *dispenserControl_;
 };

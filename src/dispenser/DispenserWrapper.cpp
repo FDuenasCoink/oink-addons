@@ -1,5 +1,10 @@
 #include "DispenserWrapper.hpp"
 
+std::thread nativeThreadDispenser;
+Napi::ThreadSafeFunction tsfnDispenser;
+static bool isRunningDispenser = true;
+static bool threadEndedDispenser = true;
+
 Napi::FunctionReference DispenserWrapper::constructor;
 
 Napi::Object DispenserWrapper::Init(Napi::Env env, Napi::Object exports) {
@@ -12,6 +17,7 @@ Napi::Object DispenserWrapper::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("endProcess", &DispenserWrapper::EndProcess),
     InstanceMethod("getDispenserFlags", &DispenserWrapper::GetDispenserFlags),
     InstanceMethod("testStatus", &DispenserWrapper::TestStatus),
+    InstanceMethod("onDispense", &DispenserWrapper::OnDispense),
   });
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
@@ -91,6 +97,7 @@ Napi::Value DispenserWrapper::DispenseCard(const Napi::CallbackInfo& info) {
 Napi::Value DispenserWrapper::RecycleCard(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
+  isRunningDispenser = false;
   Response_t response = this->dispenserControl_->RecycleCard();
   Napi::Object object = Napi::Object::New(env);
   object["message"] = Napi::String::New(env, response.Message);
@@ -101,6 +108,7 @@ Napi::Value DispenserWrapper::RecycleCard(const Napi::CallbackInfo& info) {
 Napi::Value DispenserWrapper::EndProcess(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
+  isRunningDispenser = false;
   Response_t response = this->dispenserControl_->EndProcess();
   Napi::Object object = Napi::Object::New(env);
   object["message"] = Napi::String::New(env, response.Message);
@@ -134,4 +142,58 @@ Napi::Value DispenserWrapper::TestStatus(const Napi::CallbackInfo& info) {
   object["aditionalInfo"] = Napi::String::New(env, response.AditionalInfo);
   object["priority"] = Napi::Number::New(env, response.Priority);
   return object;
+}
+
+Napi::Value DispenserWrapper::OnDispense(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(env);
+
+  if (info.Length() != 1 || !info[0].IsFunction()) {
+    Napi::TypeError::New(env, "Invalid params").ThrowAsJavaScriptException();
+  }
+  
+  Napi::Function napiFunction = info[0].As<Napi::Function>();
+  tsfnDispenser = Napi::ThreadSafeFunction::New(
+    env, 
+    napiFunction, 
+    "Callback", 
+    0, 
+    1,
+    []( Napi::Env ) {
+      nativeThreadDispenser.join();
+    });
+
+  nativeThreadDispenser = std::thread ( [this] {
+    auto callback = [](Napi::Env env, Napi::Function jsCallback, Response_t* status) {
+      Napi::Object object = Napi::Object::New(env);
+      object["statusCode"] = Napi::Number::New(env, status->StatusCode);
+      object["message"] = Napi::String::New(env, status->Message);
+      jsCallback.Call({object});
+      delete status;
+    };
+    isRunningDispenser = true;
+    threadEndedDispenser = false;
+    while (isRunningDispenser) {
+      std::this_thread::sleep_for( std::chrono::milliseconds(10));
+      Response_t response = this->dispenserControl_->CheckDevice();
+      if (response.StatusCode == 301) continue;
+      Response_t *value = new Response_t(response);
+      napi_status status = tsfnDispenser.BlockingCall(value, callback);
+      if ( status != napi_ok ) break;
+      isRunningDispenser = false;
+      break;
+    }
+    threadEndedDispenser = true;
+    tsfnDispenser.Release();
+  });
+
+  auto finishFn = [] (const Napi::CallbackInfo& info) {
+    isRunningDispenser = false;
+    while (!threadEndedDispenser);
+    std::this_thread::sleep_for( std::chrono::milliseconds(50));
+    return;
+  };
+
+  return Napi::Function::New(env, finishFn);
 }
