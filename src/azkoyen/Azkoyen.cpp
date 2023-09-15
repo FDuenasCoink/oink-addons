@@ -4,7 +4,7 @@
 std::thread nativeThreadAzkoyen;
 Napi::ThreadSafeFunction tsfnAzkoyen;
 static bool isRunningAzkoyen = true;
-static bool threadEnded = true;
+static bool threadEndedAzkoyen = true;
 
 Napi::FunctionReference Azkoyen::constructor;
 
@@ -212,7 +212,7 @@ Napi::Value Azkoyen::OnCoin(const Napi::CallbackInfo &info)
       delete coin;
     };
     isRunningAzkoyen = true;
-    threadEnded = false;
+    threadEndedAzkoyen = false;
     while (isRunningAzkoyen) {
       CoinError_t response = this->azkoyenControl_->GetCoin();
       if (response.StatusCode == 303) continue;
@@ -221,13 +221,13 @@ Napi::Value Azkoyen::OnCoin(const Napi::CallbackInfo &info)
       if ( status != napi_ok ) break;
       std::this_thread::sleep_for( std::chrono::milliseconds(10));
     }
-    threadEnded = true;
+    threadEndedAzkoyen = true;
     tsfnAzkoyen.Release();
   });
 
   auto finishFn = [] (const Napi::CallbackInfo& info) {
     isRunningAzkoyen = false;
-    while (!threadEnded);
+    while (!threadEndedAzkoyen);
     std::this_thread::sleep_for( std::chrono::milliseconds(50));
     return;
   };
