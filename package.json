@@ -1,6 +1,6 @@
 {
   "name": "@fduenascoink/oink-addons",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Addons to control oink hardware in javascript",
   "repository": {
     "type": "git",

@@ -21,6 +21,7 @@ Napi::Object Pelicano::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("testStatus", &Pelicano::TestStatus),
     InstanceMethod("cleanDevice", &Pelicano::CleanDevice),
     InstanceMethod("onCoin", &Pelicano::OnCoin),
+    InstanceAccessor<&Pelicano::GetInsertedCoins>("insertedCoins"),
   });
   constructor = Napi::Persistent(func);
   constructor.SuppressDestruct();
@@ -181,6 +182,15 @@ Napi::Value Pelicano::CleanDevice(const Napi::CallbackInfo &info) {
   object["message"] = Napi::String::New(env, response.Message);
   object["statusCode"] = Napi::Number::New(env, response.StatusCode);
   return object;
+}
+
+Napi::Value Pelicano::GetInsertedCoins(const Napi::CallbackInfo &info)
+{
+  Napi::Env env = info.Env();
+  Napi::HandleScope scope(env);
+  this->pelicanoControl_->GetInsertedCoins();
+  long insertedCoins = this->pelicanoControl_->InsertedCoins;
+  return Napi::Number::New(env, insertedCoins);
 }
 
 Napi::Value Pelicano::OnCoin(const Napi::CallbackInfo &info)

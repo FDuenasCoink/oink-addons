@@ -21,6 +21,7 @@ class Pelicano : public Napi::ObjectWrap<Pelicano> {
     Napi::Value ResetDevice(const Napi::CallbackInfo& info);
     Napi::Value TestStatus(const Napi::CallbackInfo& info);
     Napi::Value CleanDevice(const Napi::CallbackInfo& info);
+    Napi::Value GetInsertedCoins(const Napi::CallbackInfo& info);
     Napi::Value OnCoin(const Napi::CallbackInfo& info);
     PelicanoControlClass *pelicanoControl_;
 };
