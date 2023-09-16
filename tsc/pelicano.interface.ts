@@ -13,6 +13,10 @@ export interface IPelicano {
   testStatus(): DeviceStatus;
   cleanDevice(): CommandResponse;
   onCoin(callback: (coin: CoinResult) => void): UnsubscribeFunc;
+  getInsertedCoins(): PelicanoUsage;
+}
+
+interface PelicanoUsage extends CommandResponse {
   insertedCoins: number;
 }
 
