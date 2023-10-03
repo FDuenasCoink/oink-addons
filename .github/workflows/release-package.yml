@@ -14,10 +14,10 @@ jobs:
             node: x64
             command: prebuildify
             args: --arch x64+arm64
-          - name: linux-arm
-            os: ubuntu-20.04
-            command: prebuildify-cross
-            args: -i linux-arm64-lts -i linux-armv7 -i linux-armv6
+#          - name: linux-arm
+#           os: ubuntu-20.04
+#           command: prebuildify-cross
+#           args: -i linux-arm64-lts -i linux-armv7 -i linux-armv6
     name: Build ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
